@@ -1,20 +1,18 @@
 import React from 'react';
-import { View, ActivityIndicator, Text } from 'react-native';
+import { ActivityIndicator } from 'react-native';
+import styled from 'styled-components/native';
 
-interface LoadingSpinnerProps {
-  message?: string;
-  fullScreen?: boolean;
-}
+const Container = styled.View`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  background-color: ${({ theme }) => theme.colors.white};
+`;
 
-export function LoadingSpinner({ message, fullScreen = true }: LoadingSpinnerProps) {
+export function LoadingSpinner() {
   return (
-    <View
-      className={`items-center justify-center ${fullScreen ? 'flex-1 bg-white' : 'py-8'}`}
-    >
+    <Container>
       <ActivityIndicator size="large" color="#1A5C38" />
-      {message && (
-        <Text className="text-gray-500 mt-3 text-sm">{message}</Text>
-      )}
-    </View>
+    </Container>
   );
 }

@@ -1,24 +1,29 @@
 import React from 'react';
-import { View, type ViewProps } from 'react-native';
+import { ViewProps } from 'react-native';
+import styled from 'styled-components/native';
 
 interface CardProps extends ViewProps {
   children: React.ReactNode;
-  padding?: 'sm' | 'md' | 'lg';
+  padded?: boolean;
 }
 
-const paddingMap = {
-  sm: 'p-3',
-  md: 'p-4',
-  lg: 'p-6',
-};
+const Container = styled.View<{ padded: boolean }>`
+  background-color: ${({ theme }) => theme.colors.white};
+  border-radius: ${({ theme }) => theme.radius.lg}px;
+  border-width: 1px;
+  border-color: ${({ theme }) => theme.colors.gray[100]};
+  padding: ${({ padded, theme }) => (padded ? `${theme.spacing.md}px` : '0')};
+  shadow-color: #000;
+  shadow-offset: 0px 2px;
+  shadow-opacity: 0.08;
+  shadow-radius: 4px;
+  elevation: 3;
+`;
 
-export function Card({ children, padding = 'md', className = '', ...rest }: CardProps) {
+export function Card({ children, padded = true, ...rest }: CardProps) {
   return (
-    <View
-      className={`bg-white rounded-2xl shadow-sm border border-gray-100 ${paddingMap[padding]} ${className}`}
-      {...rest}
-    >
+    <Container padded={padded} {...rest}>
       {children}
-    </View>
+    </Container>
   );
 }

@@ -1,10 +1,6 @@
 import React from 'react';
-import {
-  TouchableOpacity,
-  Text,
-  ActivityIndicator,
-  type TouchableOpacityProps,
-} from 'react-native';
+import { ActivityIndicator, TouchableOpacity, TouchableOpacityProps } from 'react-native';
+import styled, { useTheme } from 'styled-components/native';
 
 type Variant = 'primary' | 'secondary' | 'danger' | 'ghost';
 
@@ -15,24 +11,36 @@ interface ButtonProps extends TouchableOpacityProps {
   fullWidth?: boolean;
 }
 
-const variantStyles: Record<Variant, { container: string; text: string }> = {
-  primary: {
-    container: 'bg-primary rounded-xl py-3 px-6 items-center justify-center',
-    text: 'text-white font-semibold text-base',
-  },
-  secondary: {
-    container: 'bg-secondary rounded-xl py-3 px-6 items-center justify-center',
-    text: 'text-white font-semibold text-base',
-  },
-  danger: {
-    container: 'bg-danger rounded-xl py-3 px-6 items-center justify-center',
-    text: 'text-white font-semibold text-base',
-  },
-  ghost: {
-    container: 'border border-primary rounded-xl py-3 px-6 items-center justify-center bg-transparent',
-    text: 'text-primary font-semibold text-base',
-  },
-};
+const Container = styled.TouchableOpacity<{
+  variant: Variant;
+  fullWidth: boolean;
+  disabled: boolean;
+}>`
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  border-radius: ${({ theme }) => theme.radius.md}px;
+  opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
+  width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
+  background-color: ${({ theme, variant }) => {
+    switch (variant) {
+      case 'primary':   return theme.colors.primary;
+      case 'secondary': return theme.colors.secondary;
+      case 'danger':    return theme.colors.danger;
+      case 'ghost':     return 'transparent';
+    }
+  }};
+  border-width: ${({ variant }) => (variant === 'ghost' ? '1.5px' : '0')};
+  border-color: ${({ theme }) => theme.colors.primary};
+`;
+
+const Label = styled.Text<{ variant: Variant }>`
+  font-size: ${({ theme }) => theme.fontSize.md}px;
+  font-weight: ${({ theme }) => theme.fontWeight.semibold};
+  color: ${({ theme, variant }) =>
+    variant === 'ghost' ? theme.colors.primary : theme.colors.white};
+`;
 
 export function Button({
   label,
@@ -42,21 +50,25 @@ export function Button({
   disabled,
   ...rest
 }: ButtonProps) {
-  const styles = variantStyles[variant];
+  const theme = useTheme();
   const isDisabled = disabled || loading;
 
   return (
-    <TouchableOpacity
-      className={`${styles.container} ${fullWidth ? 'w-full' : ''} ${isDisabled ? 'opacity-50' : ''}`}
-      disabled={isDisabled}
+    <Container
+      variant={variant}
+      fullWidth={fullWidth}
+      disabled={!!isDisabled}
       activeOpacity={0.75}
       {...rest}
     >
       {loading ? (
-        <ActivityIndicator color="#FFFFFF" size="small" />
+        <ActivityIndicator
+          color={variant === 'ghost' ? theme.colors.primary : theme.colors.white}
+          size="small"
+        />
       ) : (
-        <Text className={styles.text}>{label}</Text>
+        <Label variant={variant}>{label}</Label>
       )}
-    </TouchableOpacity>
+    </Container>
   );
 }

@@ -1,32 +1,56 @@
 import React, { forwardRef } from 'react';
-import { View, Text, TextInput, type TextInputProps } from 'react-native';
+import { TextInput, TextInputProps } from 'react-native';
+import styled, { useTheme } from 'styled-components/native';
 
 interface InputProps extends TextInputProps {
   label?: string;
   error?: string;
 }
 
+const Wrapper = styled.View`
+  margin-bottom: ${({ theme }) => theme.spacing.md}px;
+`;
+
+const Label = styled.Text`
+  font-size: ${({ theme }) => theme.fontSize.sm}px;
+  font-weight: ${({ theme }) => theme.fontWeight.medium};
+  color: ${({ theme }) => theme.colors.gray[700]};
+  margin-bottom: 6px;
+`;
+
+const StyledInput = styled.TextInput<{ hasError: boolean }>`
+  border-width: 1.5px;
+  border-color: ${({ theme, hasError }) =>
+    hasError ? theme.colors.danger : theme.colors.gray[300]};
+  border-radius: ${({ theme }) => theme.radius.md}px;
+  padding: 12px 16px;
+  font-size: ${({ theme }) => theme.fontSize.md}px;
+  color: ${({ theme }) => theme.colors.gray[900]};
+  background-color: ${({ theme }) => theme.colors.white};
+`;
+
+const ErrorText = styled.Text`
+  font-size: ${({ theme }) => theme.fontSize.xs}px;
+  color: ${({ theme }) => theme.colors.danger};
+  margin-top: 4px;
+`;
+
 export const Input = forwardRef<TextInput, InputProps>(function Input(
   { label, error, ...rest },
   ref,
 ) {
+  const theme = useTheme();
+
   return (
-    <View className="mb-4">
-      {label && (
-        <Text className="text-sm font-medium text-gray-700 mb-1">{label}</Text>
-      )}
-      <TextInput
+    <Wrapper>
+      {label && <Label>{label}</Label>}
+      <StyledInput
         ref={ref}
-        className={`
-          border rounded-xl px-4 py-3 text-base text-gray-900 bg-white
-          ${error ? 'border-danger' : 'border-gray-300'}
-        `}
-        placeholderTextColor="#9CA3AF"
+        hasError={!!error}
+        placeholderTextColor={theme.colors.gray[400]}
         {...rest}
       />
-      {error && (
-        <Text className="text-danger text-xs mt-1">{error}</Text>
-      )}
-    </View>
+      {error && <ErrorText>{error}</ErrorText>}
+    </Wrapper>
   );
 });

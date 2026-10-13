@@ -57,7 +57,6 @@ src/
 └── types/               # Tipos compartilhados da API
 ```
 
-
 ## Fluxo de autenticação
 
 1. `RootNavigator` lê o `token` do Redux store (persistido via AsyncStorage pelo redux-persist).
@@ -65,6 +64,17 @@ src/
 3. Se `token` presente → exibe `AppStack` (aplicação completa).
 4. O interceptor Axios do `src/lib/axios.ts` lê o token diretamente do `SecureStore` a cada requisição.
 5. Em caso de 401 em rota autenticada, o interceptor limpa o `SecureStore`; o Redux detecta a mudança e redireciona para Login.
+
+## Progresso por semana
+
+| Semana | Período | Status |
+|---|---|---|
+| 1 — Setup e base | 12–18/out | ✅ Concluído |
+| 2 — Auth + lista de posts | 19–25/out | 🔜 |
+| 3 — Posts completos e admin | 26/out–01/nov | 🔜 |
+| 4 — CRUD professores e alunos | 02–08/nov | 🔜 |
+| 5 — Qualidade e entrega | 09–15/nov | 🔜 |
+| Entrega | 16/nov | — |
 
 ## Decisões arquiteturais
 
@@ -78,18 +88,9 @@ src/
 | Alias de importação | `@/` → `./src` via `babel-plugin-module-resolver` | Evita caminhos relativos profundos (`../../../`) |
 | Navegação | Stack + Bottom Tabs (React Navigation 6) | Padrão da comunidade; compatível com Expo SDK 52 |
 
-## Progresso por semana
-
-| Semana | Período | Status |
-|---|---|---|
-| 1 — Setup e base | 12–18/out | ✅ Concluído |
-| 2 — Auth + lista de posts | 19–25/out | 🔜 |
-| 3 — Posts completos e admin | 26/out–01/nov | 🔜 |
-| 4 — CRUD professores e alunos | 02–08/nov | 🔜 |
-| 5 — Qualidade e entrega | 09–15/nov | 🔜 |
-| Entrega | 16/nov | — |
-
 ## Links
+
+
 
 - Back-end (Fase 2): https://educablog.onrender.com/docs/
 - Repositório back-end: https://github.com/fiapfullstack2026/educablog

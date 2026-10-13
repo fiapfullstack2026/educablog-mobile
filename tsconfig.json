@@ -4,15 +4,9 @@
     "strict": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "src/*"
-      ]
+      "@/*": ["src/*"]
     },
     "jsx": "react-native"
   },
-  "include": [
-    "src",
-    "App.tsx",
-    "nativewind-env.d.ts"
-  ]
+  "include": ["src", "App.tsx"]
 }
