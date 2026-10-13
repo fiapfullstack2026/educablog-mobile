@@ -11,7 +11,7 @@ Aplicativo mobile do EducaBlog desenvolvido com **React Native + Expo**.
 | Estado global | Redux Toolkit 2 + redux-persist |
 | Armazenamento seguro | expo-secure-store (token JWT) |
 | HTTP | Axios 1.7 com interceptor JWT |
-| Estilização | NativeWind 4 (Tailwind CSS) |
+| Estilização | Styled-Components (CSS) |
 | Formulários | react-hook-form + Zod |
 | Linguagem | TypeScript strict |
 
