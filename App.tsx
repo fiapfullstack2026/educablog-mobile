@@ -12,14 +12,14 @@ import { theme } from '@/styles/theme';
 export default function App() {
   return (
     <Provider store={store}>
-        <ThemeProvider theme={theme}>
-      <PersistGate loading={<LoadingSpinner />} persistor={persistor}>
+      <ThemeProvider theme={theme}>
+        <PersistGate loading={<LoadingSpinner />} persistor={persistor}>
           <SafeAreaProvider>
             <StatusBar style="light" backgroundColor="#1A5C38" />
             <RootNavigator />
           </SafeAreaProvider>
-      </PersistGate>
-        </ThemeProvider>
+        </PersistGate>
+      </ThemeProvider>
     </Provider>
   );
 }
