@@ -11,7 +11,7 @@ Aplicativo mobile do EducaBlog desenvolvido com **React Native + Expo**.
 | Estado global | Redux Toolkit 2 + redux-persist |
 | Armazenamento seguro | expo-secure-store (token JWT) |
 | HTTP | Axios 1.7 com interceptor JWT |
-| Estilização | Styled-Components (CSS) |
+| Estilização | Styled-components (CSS) |
 | Formulários | react-hook-form + Zod |
 | Linguagem | TypeScript strict |
 
@@ -80,7 +80,7 @@ src/
 
 | Decisão | Escolha | Justificativa |
 |---|---|---|
-| Estilização | NativeWind v4 | Reutiliza os tokens de cor da Fase 3 (web) via `tailwind.config.js` compartilhado |
+| Estilização | Styled-components | Reutiliza os tokens de cor da Fase 3 (web) |
 | Integração NativeWind | `withNativeWind` no `metro.config.js` | v4 removeu o plugin Babel `nativewind/babel`; configuração agora é via Metro |
 | Token JWT | `expo-secure-store` | Substitui `localStorage` do web; armazenamento criptografado no keychain/keystore do SO |
 | Estado global | Redux Toolkit + redux-persist | Mesma biblioteca da Fase 3; persistência via AsyncStorage (substitui localStorage) |
