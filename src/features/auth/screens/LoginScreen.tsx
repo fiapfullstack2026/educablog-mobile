@@ -1,132 +1,147 @@
-import React from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import styled from 'styled-components/native';
-import { Button } from '@/components/Button';
-import { Input } from '@/components/Input';
-import { Feedback } from '@/components/Feedback';
-import { useLogin } from '../hooks/useLogin';
+import React, { useCallback, useRef } from "react";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  TextInput,
+  Pressable,
+} from "react-native";
+import { Controller } from "react-hook-form";
+import { SafeAreaView } from "react-native-safe-area-context";
+import styled from "styled-components/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 
-// ─── Styled Components ────────────────────────────────────────────────────────
+import { Button } from "@/components/Button";
+import { Input } from "@/components/Input";
+import { Feedback } from "@/components/Feedback";
+import { useLogin } from "../hooks/useLogin";
 
 const Safe = styled(SafeAreaView)`
   flex: 1;
-  background-color: ${({ theme }) => theme.colors.gray[100]};
+  background-color: #eaf7f0;
+`;
+
+const Content = styled.View`
+  flex: 1;
+  justify-content: center;
+  padding: 24px;
+`;
+
+const Card = styled.View`
+  width: 100%;
+  max-width: 400px;
+  align-self: center;
+  background-color: #ffffff;
+  border-radius: 20px;
+  border-width: 1px;
+  border-color: #d5eadf;
+  padding: 24px;
 `;
 
 const Header = styled.View`
-  background-color: ${({ theme }) => theme.colors.primary};
-  padding-top: 64px;
-  padding-bottom: 48px;
   align-items: center;
-  padding-horizontal: ${({ theme }) => theme.spacing.lg}px;
+  margin-bottom: 24px;
 `;
 
 const LogoBox = styled.View`
-  width: 80px;
-  height: 80px;
-  border-radius: ${({ theme }) => theme.radius.xl}px;
-  background-color: ${({ theme }) => theme.colors.white};
+  width: 48px;
+  height: 48px;
+  margin-bottom: 12px;
   align-items: center;
   justify-content: center;
-  margin-bottom: ${({ theme }) => theme.spacing.md}px;
-  shadow-color: #000;
-  shadow-offset: 0px 2px;
-  shadow-opacity: 0.15;
-  shadow-radius: 4px;
-  elevation: 4;
+  border-radius: 12px;
+  border-width: 1px;
+  border-color: #d5eadf;
+  background-color: #eaf7f0;
 `;
 
 const LogoText = styled.Text`
-  font-size: 36px;
-  font-weight: ${({ theme }) => theme.fontWeight.bold};
-  color: ${({ theme }) => theme.colors.primary};
+  font-size: 22px;
+  font-weight: 600;
+  color: #21845b;
 `;
 
-const AppTitle = styled.Text`
-  font-size: ${({ theme }) => theme.fontSize.xxxl}px;
-  font-weight: ${({ theme }) => theme.fontWeight.bold};
-  color: ${({ theme }) => theme.colors.white};
-  letter-spacing: -0.5px;
+const Title = styled.Text`
+  font-size: 26px;
+  font-weight: 500;
 `;
 
-const AppSubtitle = styled.Text`
-  font-size: ${({ theme }) => theme.fontSize.sm}px;
-  color: rgba(255, 255, 255, 0.7);
+const Subtitle = styled.Text`
+  font-size: 14px;
+  color: #68756e;
   margin-top: 4px;
+  text-align: center;
 `;
 
-const Body = styled.View`
-  flex: 1;
-  padding-horizontal: ${({ theme }) => theme.spacing.lg}px;
-  margin-top: -24px;
+const RegisterArea = styled.View`
+  align-items: center;
+  margin-top: 20px;
 `;
 
-const FormCard = styled.View`
-  background-color: ${({ theme }) => theme.colors.white};
-  border-radius: ${({ theme }) => theme.radius.xl}px;
-  padding: ${({ theme }) => theme.spacing.lg}px;
-  shadow-color: #000;
-  shadow-offset: 0px 4px;
-  shadow-opacity: 0.1;
-  shadow-radius: 8px;
-  elevation: 5;
-  border-width: 1px;
-  border-color: ${({ theme }) => theme.colors.gray[100]};
+const RegisterText = styled.Text`
+  font-size: 14px;
+  color: #68756e;
 `;
 
-const FormTitle = styled.Text`
-  font-size: ${({ theme }) => theme.fontSize.xl}px;
-  font-weight: ${({ theme }) => theme.fontWeight.semibold};
-  color: ${({ theme }) => theme.colors.gray[800]};
-  margin-bottom: 4px;
-`;
-
-const FormSubtitle = styled.Text`
-  font-size: ${({ theme }) => theme.fontSize.sm}px;
-  color: ${({ theme }) => theme.colors.gray[500]};
-  margin-bottom: ${({ theme }) => theme.spacing.lg}px;
-`;
-
-const FeedbackWrapper = styled.View`
-  margin-bottom: ${({ theme }) => theme.spacing.md}px;
+const RegisterLink = styled.Text`
+  margin-top: 5px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #2876c7;
 `;
 
 const Footer = styled.Text`
   text-align: center;
-  font-size: ${({ theme }) => theme.fontSize.xs}px;
-  color: ${({ theme }) => theme.colors.gray[400]};
-  margin-top: ${({ theme }) => theme.spacing.xl}px;
-  margin-bottom: ${({ theme }) => theme.spacing.lg}px;
+  font-size: 12px;
+  color: #8b9690;
+  margin-top: 16px;
 `;
 
-// ─── Screen ──────────────────────────────────────────────────────────────────
+const FeedbackWrapper = styled.View`
+  margin-bottom: 16px;
+`;
 
 export function LoginScreen() {
-  const { form, error, loading, submit } = useLogin();
+  const navigation = useNavigation<any>();
+
+  const { control, errors, error, loading, submit, reset } = useLogin();
+
+  useFocusEffect(
+    useCallback(() => {
+      return () => reset();
+    }, [reset]),
+  );
+
+  const passwordRef = useRef<TextInput>(null);
+
+  function goToRegister() {
+    navigation.navigate("Register");
+  }
 
   return (
-    <Safe edges={['bottom']}>
+    <Safe edges={["bottom", "top"]}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
         <ScrollView
           contentContainerStyle={{ flexGrow: 1 }}
           keyboardShouldPersistTaps="handled"
         >
-          <Header>
-            <LogoBox>
-              <LogoText>E</LogoText>
-            </LogoBox>
-            <AppTitle>EducaBlog</AppTitle>
-            <AppSubtitle>Plataforma educacional</AppSubtitle>
-          </Header>
+          <Content>
+            <Card>
+              <Header>
+                <LogoBox>
+                  <LogoText>E</LogoText>
+                </LogoBox>
 
-          <Body>
-            <FormCard>
-              <FormTitle>Entrar</FormTitle>
-              <FormSubtitle>Preencha usuário e senha.</FormSubtitle>
+                <Title>
+                  <Title style={{ color: "#21845b" }}>Educa</Title>
+                  <Title style={{ color: "#2876c7" }}>Blog</Title>
+                </Title>
+
+                <Subtitle>Entre na sua conta para continuar</Subtitle>
+              </Header>
 
               {error ? (
                 <FeedbackWrapper>
@@ -134,24 +149,42 @@ export function LoginScreen() {
                 </FeedbackWrapper>
               ) : null}
 
-              <Input
-                label="Usuário"
-                placeholder="prof.joao"
-                autoCapitalize="none"
-                autoCorrect={false}
-                returnKeyType="next"
-                value={form.username}
-                onChangeText={(v) => form.setUsername(v)}
+              <Controller
+                control={control}
+                name="username"
+                render={({ field: { value, onChange, onBlur } }) => (
+                  <Input
+                    label="Usuário"
+                    placeholder="Digite seu usuário"
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    returnKeyType="next"
+                    onSubmitEditing={() => passwordRef.current?.focus()}
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    error={errors.username?.message}
+                  />
+                )}
               />
 
-              <Input
-                label="Senha"
-                placeholder="••••••••"
-                secureTextEntry
-                returnKeyType="done"
-                onSubmitEditing={submit}
-                value={form.password}
-                onChangeText={(v) => form.setPassword(v)}
+              <Controller
+                control={control}
+                name="password"
+                render={({ field: { value, onChange, onBlur } }) => (
+                  <Input
+                    ref={passwordRef}
+                    label="Senha"
+                    placeholder="Digite sua senha"
+                    secureTextEntry
+                    returnKeyType="done"
+                    onSubmitEditing={submit}
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    error={errors.password?.message}
+                  />
+                )}
               />
 
               <Button
@@ -160,10 +193,18 @@ export function LoginScreen() {
                 loading={loading}
                 onPress={submit}
               />
-            </FormCard>
 
-            <Footer>EducaBlog • Plataforma educacional FIAP</Footer>
-          </Body>
+              <RegisterArea>
+                <RegisterText>Ainda não possui uma conta?</RegisterText>
+
+                <Pressable onPress={goToRegister} hitSlop={8}>
+                  <RegisterLink>Cadastrar usuário</RegisterLink>
+                </Pressable>
+              </RegisterArea>
+            </Card>
+
+            <Footer>EducaBlog • Plataforma educacional</Footer>
+          </Content>
         </ScrollView>
       </KeyboardAvoidingView>
     </Safe>
