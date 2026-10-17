@@ -1,8 +1,9 @@
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 // --- Stack pública (sem autenticação) ---
 export type PublicStackParamList = {
   Login: undefined;
+  Register: undefined;
 };
 
 // --- Stack autenticada ---
@@ -26,18 +27,54 @@ export type AppStackParamList = {
 };
 
 // Helpers de tipagem por tela
-export type LoginScreenProps = NativeStackScreenProps<PublicStackParamList, 'Login'>;
+export type LoginScreenProps = NativeStackScreenProps<
+  PublicStackParamList,
+  "Login"
+>;
+export type RegisterScreenProps = NativeStackScreenProps<
+  PublicStackParamList,
+  "Register"
+>;
+export type HomeScreenProps = NativeStackScreenProps<AppStackParamList, "Home">;
+export type PostDetailScreenProps = NativeStackScreenProps<
+  AppStackParamList,
+  "PostDetail"
+>;
+export type CreatePostScreenProps = NativeStackScreenProps<
+  AppStackParamList,
+  "CreatePost"
+>;
+export type EditPostScreenProps = NativeStackScreenProps<
+  AppStackParamList,
+  "EditPost"
+>;
+export type AdminPostsScreenProps = NativeStackScreenProps<
+  AppStackParamList,
+  "AdminPosts"
+>;
 
-export type HomeScreenProps = NativeStackScreenProps<AppStackParamList, 'Home'>;
-export type PostDetailScreenProps = NativeStackScreenProps<AppStackParamList, 'PostDetail'>;
-export type CreatePostScreenProps = NativeStackScreenProps<AppStackParamList, 'CreatePost'>;
-export type EditPostScreenProps = NativeStackScreenProps<AppStackParamList, 'EditPost'>;
-export type AdminPostsScreenProps = NativeStackScreenProps<AppStackParamList, 'AdminPosts'>;
+export type TeacherListScreenProps = NativeStackScreenProps<
+  AppStackParamList,
+  "TeacherList"
+>;
+export type CreateTeacherScreenProps = NativeStackScreenProps<
+  AppStackParamList,
+  "CreateTeacher"
+>;
+export type EditTeacherScreenProps = NativeStackScreenProps<
+  AppStackParamList,
+  "EditTeacher"
+>;
 
-export type TeacherListScreenProps = NativeStackScreenProps<AppStackParamList, 'TeacherList'>;
-export type CreateTeacherScreenProps = NativeStackScreenProps<AppStackParamList, 'CreateTeacher'>;
-export type EditTeacherScreenProps = NativeStackScreenProps<AppStackParamList, 'EditTeacher'>;
-
-export type StudentListScreenProps = NativeStackScreenProps<AppStackParamList, 'StudentList'>;
-export type CreateStudentScreenProps = NativeStackScreenProps<AppStackParamList, 'CreateStudent'>;
-export type EditStudentScreenProps = NativeStackScreenProps<AppStackParamList, 'EditStudent'>;
+export type StudentListScreenProps = NativeStackScreenProps<
+  AppStackParamList,
+  "StudentList"
+>;
+export type CreateStudentScreenProps = NativeStackScreenProps<
+  AppStackParamList,
+  "CreateStudent"
+>;
+export type EditStudentScreenProps = NativeStackScreenProps<
+  AppStackParamList,
+  "EditStudent"
+>;
