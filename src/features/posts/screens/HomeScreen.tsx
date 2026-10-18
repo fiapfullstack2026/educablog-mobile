@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { FlatList, RefreshControl, type ListRenderItem } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -7,8 +7,10 @@ import styled, { useTheme } from "styled-components/native";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { Feedback } from "@/components/Feedback";
 import { Button } from "@/components/Button";
+import { useDebounce } from "@/hooks/useDebounce";
 import type { HomeScreenProps } from "@/navigation/types";
 import { PostCard } from "../components/PostCard";
+import { SearchBar } from "../components/SearchBar";
 import { usePosts } from "../hooks/usePosts";
 import type { Post } from "../types/post.types";
 
@@ -32,6 +34,10 @@ const Subtitle = styled.Text`
   margin-top: ${({ theme }) => theme.spacing.xs}px;
   font-size: ${({ theme }) => theme.fontSize.sm}px;
   color: ${({ theme }) => theme.colors.gray[500]};
+`;
+
+const SearchWrapper = styled.View`
+  margin-top: ${({ theme }) => theme.spacing.md}px;
 `;
 
 const FeedbackWrapper = styled.View`
@@ -61,7 +67,11 @@ const EmptyText = styled.Text`
 
 export function HomeScreen({ navigation }: HomeScreenProps) {
   const theme = useTheme();
-  const { posts, loading, refreshing, error, refresh } = usePosts();
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search);
+  const { posts, loading, searching, refreshing, error, refresh } =
+    usePosts(debouncedSearch);
+  const term = debouncedSearch.trim();
 
   const openPost = useCallback(
     (post: Post) => navigation.navigate("PostDetail", { postId: post._id }),
@@ -83,6 +93,8 @@ export function HomeScreen({ navigation }: HomeScreenProps) {
         renderItem={renderItem}
         ItemSeparatorComponent={Separator}
         contentContainerStyle={{ padding: theme.spacing.md }}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -95,6 +107,14 @@ export function HomeScreen({ navigation }: HomeScreenProps) {
           <Header>
             <Title>Seja bem-vindo(a)!</Title>
             <Subtitle>Confira os últimos conteúdos publicados.</Subtitle>
+            <SearchWrapper>
+              <SearchBar
+                value={search}
+                onChangeText={setSearch}
+                loading={search !== debouncedSearch || searching}
+                placeholder="Buscar por título..."
+              />
+            </SearchWrapper>
           </Header>
         }
         ListEmptyComponent={
@@ -111,7 +131,11 @@ export function HomeScreen({ navigation }: HomeScreenProps) {
                 size={40}
                 color={theme.colors.gray[400]}
               />
-              <EmptyText>Nenhum post publicado ainda.</EmptyText>
+              <EmptyText>
+                {term
+                  ? `Nenhum post encontrado para "${term}".`
+                  : "Nenhum post publicado ainda."}
+              </EmptyText>
             </Empty>
           )
         }
