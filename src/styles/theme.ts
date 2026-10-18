@@ -27,11 +27,14 @@ export const theme = {
       fisica:     { bg: '#EAF0FB', border: '#A0BEE8', text: '#1B3F7A' },
       matematica: { bg: '#FFF5E6', border: '#FFD08A', text: '#7A4100' },
       quimica:    { bg: '#F3EAFD', border: '#C9A8F0', text: '#4A1A7A' },
+      geografia:  { bg: '#E6F7FA', border: '#89D4E0', text: '#0E5C66' },
       historia:   { bg: '#FEF0E6', border: '#F5B98A', text: '#7A3010' },
       portugues:  { bg: '#FDE8F0', border: '#F0A0C0', text: '#7A1840' },
       artes:      { bg: '#FFF8E6', border: '#FFD966', text: '#6B4C00' },
       filosofia:  { bg: '#F0EEF8', border: '#B0A8E0', text: '#2A1A6A' },
       edfisica:   { bg: '#EAFAF0', border: '#80DBA8', text: '#0E5C30' },
+      // Fallback para disciplinas não reconhecidas
+      geral:      { bg: '#F9FAFB', border: '#E5E7EB', text: '#4B5563' },
     },
   },
   spacing: {

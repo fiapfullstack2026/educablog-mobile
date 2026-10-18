@@ -1,15 +1,121 @@
-import React from 'react';
-import { View, Text } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { LoadingSpinner } from '@/components/LoadingSpinner';
+import React, { useCallback } from "react";
+import { FlatList, RefreshControl, type ListRenderItem } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import styled, { useTheme } from "styled-components/native";
 
-/** Semana 2: lista de posts + busca */
-export function HomeScreen() {
+import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { Feedback } from "@/components/Feedback";
+import { Button } from "@/components/Button";
+import type { HomeScreenProps } from "@/navigation/types";
+import { PostCard } from "../components/PostCard";
+import { usePosts } from "../hooks/usePosts";
+import type { Post } from "../types/post.types";
+
+// O header do AppStack já cobre a borda superior
+const Safe = styled(SafeAreaView)`
+  flex: 1;
+  background-color: ${({ theme }) => theme.colors.gray[50]};
+`;
+
+const Header = styled.View`
+  margin-bottom: ${({ theme }) => theme.spacing.lg}px;
+`;
+
+const Title = styled.Text`
+  font-size: ${({ theme }) => theme.fontSize.xxl}px;
+  font-weight: ${({ theme }) => theme.fontWeight.bold};
+  color: ${({ theme }) => theme.colors.primary};
+`;
+
+const Subtitle = styled.Text`
+  margin-top: ${({ theme }) => theme.spacing.xs}px;
+  font-size: ${({ theme }) => theme.fontSize.sm}px;
+  color: ${({ theme }) => theme.colors.gray[500]};
+`;
+
+const FeedbackWrapper = styled.View`
+  margin-bottom: ${({ theme }) => theme.spacing.md}px;
+`;
+
+const Separator = styled.View`
+  height: ${({ theme }) => theme.spacing.md}px;
+`;
+
+const Empty = styled.View`
+  align-items: center;
+  padding: ${({ theme }) => theme.spacing.xl}px;
+  border-radius: ${({ theme }) => theme.radius.lg}px;
+  border-width: 1px;
+  border-color: ${({ theme }) => theme.colors.gray[200]};
+  background-color: ${({ theme }) => theme.colors.white};
+`;
+
+const EmptyText = styled.Text`
+  margin-top: ${({ theme }) => theme.spacing.sm}px;
+  margin-bottom: ${({ theme }) => theme.spacing.md}px;
+  font-size: ${({ theme }) => theme.fontSize.sm}px;
+  color: ${({ theme }) => theme.colors.gray[500]};
+  text-align: center;
+`;
+
+export function HomeScreen({ navigation }: HomeScreenProps) {
+  const theme = useTheme();
+  const { posts, loading, refreshing, error, refresh } = usePosts();
+
+  const openPost = useCallback(
+    (post: Post) => navigation.navigate("PostDetail", { postId: post._id }),
+    [navigation],
+  );
+
+  const renderItem = useCallback<ListRenderItem<Post>>(
+    ({ item }) => <PostCard post={item} onPress={openPost} />,
+    [openPost],
+  );
+
+  if (loading) return <LoadingSpinner />;
+
   return (
-    <SafeAreaView className="flex-1 bg-gray-50">
-      <View className="flex-1 items-center justify-center">
-        <Text className="text-gray-400">Lista de posts — Semana 2</Text>
-      </View>
-    </SafeAreaView>
+    <Safe edges={["bottom"]}>
+      <FlatList
+        data={posts}
+        keyExtractor={(post) => post._id}
+        renderItem={renderItem}
+        ItemSeparatorComponent={Separator}
+        contentContainerStyle={{ padding: theme.spacing.md }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={refresh}
+            colors={[theme.colors.primary]}
+            tintColor={theme.colors.primary}
+          />
+        }
+        ListHeaderComponent={
+          <Header>
+            <Title>Seja bem-vindo(a)!</Title>
+            <Subtitle>Confira os últimos conteúdos publicados.</Subtitle>
+          </Header>
+        }
+        ListEmptyComponent={
+          error ? (
+            <FeedbackWrapper>
+              <Feedback type="error" message={error} />
+              <Separator />
+              <Button label="Tentar novamente" variant="ghost" onPress={refresh} />
+            </FeedbackWrapper>
+          ) : (
+            <Empty>
+              <MaterialCommunityIcons
+                name="text-box-search-outline"
+                size={40}
+                color={theme.colors.gray[400]}
+              />
+              <EmptyText>Nenhum post publicado ainda.</EmptyText>
+            </Empty>
+          )
+        }
+      />
+    </Safe>
   );
 }
