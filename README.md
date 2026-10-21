@@ -69,11 +69,11 @@ src/
 
 | Semana | Período | Status |
 |---|---|---|
-| 1 — Setup e base | 12–18/out | ✅ Concluído |
-| 2 — Auth + lista de posts | 19–25/out | 🔜 |
-| 3 — Posts completos e admin | 26/out–01/nov | 🔜 |
-| 4 — CRUD professores e alunos | 02–08/nov | 🔜 |
-| 5 — Qualidade e entrega | 09–15/nov | 🔜 |
+| 1 — Setup e base | 12 | ✅ Concluído |
+| 1 — Auth + lista de posts | 19–25/out | ✅ Concluído |
+| 2 — Posts completos e admin | 26/out–01/nov | 🔜 |
+| 3 — CRUD professores e alunos | 02–08/nov | 🔜 |
+| 4 — Qualidade e entrega | 09–15/nov | 🔜 |
 | Entrega | 16/nov | — |
 
 ## Decisões arquiteturais
