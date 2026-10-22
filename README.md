@@ -65,6 +65,10 @@ src/
 4. O interceptor Axios do `src/lib/axios.ts` lê o token diretamente do `SecureStore` a cada requisição.
 5. Em caso de 401 em rota autenticada, o interceptor limpa o `SecureStore`; o Redux detecta a mudança e redireciona para Login.
 
+## Problemas conhecidos
+
+- **Acentos no emulador Android (ç, ã, ó...):** ao digitar pelo teclado físico do computador, o emulador descarta esses caracteres antes de chegarem ao app. Não é um bug do código. Alternativas: colar o texto (a área de transferência é compartilhada), ativar o teclado virtual do emulador e manter pressionada a letra, ou testar em um celular com Expo Go.
+
 ## Progresso por semana
 
 | Semana | Período | Status |
@@ -87,6 +91,7 @@ src/
 | Estrutura de pastas | Feature-based (`auth/`, `posts/`, `teachers/`, `students/`) | Alinha com a divisão de responsabilidades entre membros do grupo |
 | Alias de importação | `@/` → `./src` via `babel-plugin-module-resolver` | Evita caminhos relativos profundos (`../../../`) |
 | Navegação | Stack + Bottom Tabs (React Navigation 6) | Padrão da comunidade; compatível com Expo SDK 52 |
+| Formulários | Schema Zod + hook por feature (`useLogin`, `useCreatePost`) | A tela só renderiza; validação, envio e erros ficam no hook |
 
 ## Links
 

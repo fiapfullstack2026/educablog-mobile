@@ -31,15 +31,14 @@ export function AppStack() {
       }}
     >
       <Stack.Screen
-        name="CreatePost"
-        component={CreatePostScreen}
-        options={{ title: "Novo Post" }}
-      />
-
-      <Stack.Screen
         name="Home"
         component={HomeScreen}
         options={{ title: "EducaBlog" }}
+      />
+      <Stack.Screen
+        name="CreatePost"
+        component={CreatePostScreen}
+        options={{ title: "Novo Post" }}
       />
       <Stack.Screen
         name="PostDetail"
