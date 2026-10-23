@@ -1,67 +1,99 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { isAxiosError } from "axios";
-import { getPosts, searchPosts } from "../services/postsService";
-import type { Post } from "../types/post.types";
+
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import type { ApiError } from "@/types/api.types";
+
+import { setPosts, setListLoading, setListError } from "../postSlice";
+import { getPosts, searchPosts } from "../services/postsService";
 
 function getErrorMessage(err: unknown): string {
   if (isAxiosError<ApiError>(err)) {
     if (err.code === "ECONNABORTED") {
       return "O servidor demorou para responder. Tente novamente.";
     }
+
     if (!err.response) {
       return "Não foi possível conectar ao servidor. Verifique sua conexão.";
     }
+
     return err.response.data?.message ?? "Erro ao carregar os posts.";
   }
+
   return "Erro inesperado. Tente novamente.";
 }
 
-/**
- * Lista os posts; com `search` preenchido usa a busca do back-end.
- */
 export function usePosts(search = "") {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
+  const dispatch = useAppDispatch();
+
+  const posts = useAppSelector((state) => state.posts.list);
+  const loading = useAppSelector((state) => state.posts.listLoading);
+  const error = useAppSelector((state) => state.posts.listError);
+
   const [searching, setSearching] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  // Descarta respostas de requisições antigas que chegam depois da mais recente
   const requestId = useRef(0);
   const term = search.trim();
 
-  /** Retorna `true` se esta ainda era a requisição mais recente */
   const load = useCallback(async () => {
     const id = ++requestId.current;
-    setError(null);
+
+    dispatch(setListLoading(true));
+    dispatch(setListError(null));
+
     try {
       const result = term ? await searchPosts(term) : await getPosts();
-      if (id === requestId.current) setPosts(result);
+
+      if (id === requestId.current) {
+        dispatch(setPosts(result));
+      }
     } catch (err) {
       if (id === requestId.current) {
-        setPosts([]);
-        setError(getErrorMessage(err));
+        dispatch(setPosts([]));
+        dispatch(setListError(getErrorMessage(err)));
+      }
+    } finally {
+      if (id === requestId.current) {
+        dispatch(setListLoading(false));
       }
     }
+
     return id === requestId.current;
-  }, [term]);
+  }, [dispatch, term]);
 
   useEffect(() => {
+    let active = true;
+
     setSearching(true);
-    load().then((isLatest) => {
-      if (!isLatest) return;
-      setLoading(false);
-      setSearching(false);
+
+    void load().then((isLatest) => {
+      if (active && isLatest) {
+        setSearching(false);
+      }
     });
+
+    return () => {
+      active = false;
+    };
   }, [load]);
 
-  // Pull-to-refresh: mantém a lista atual visível enquanto recarrega
   const refresh = useCallback(async () => {
     setRefreshing(true);
-    await load();
-    setRefreshing(false);
+
+    try {
+      await load();
+    } finally {
+      setRefreshing(false);
+    }
   }, [load]);
 
-  return { posts, loading, searching, refreshing, error, refresh };
+  return {
+    posts,
+    loading,
+    searching,
+    refreshing,
+    error,
+    refresh,
+  };
 }
