@@ -1,5 +1,5 @@
 import { api } from "@/lib/axios";
-import type { ApiListResponse } from "@/types/api.types";
+import type { ApiListResponse, ApiResponse } from "@/types/api.types";
 import type { Post } from "../types/post.types";
 
 // Usa `new RegExp(q)` para que buscas como "C++" sejam literais e não gerem 500
@@ -20,4 +20,16 @@ export async function searchPosts(query: string): Promise<Post[]> {
   });
 
   return data.data ?? [];
+}
+
+/**
+ * Busca os detalhes completos de um post pelo ID.
+ * GET /posts/:id
+ */
+export async function getPostById(id: string): Promise<Post> {
+  const { data } = await api.get<ApiResponse<Post>>(
+    `/posts/${encodeURIComponent(id)}`,
+  );
+
+  return data.data;
 }
