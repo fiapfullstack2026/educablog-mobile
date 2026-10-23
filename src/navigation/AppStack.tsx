@@ -4,6 +4,7 @@ import type { AppStackParamList } from "./types";
 
 import { useAppSelector } from "@/store/hooks";
 import { selectIsTeacher } from "@/store/authSlice";
+import { HomeHeaderActions } from "./HomeHeaderActions";
 
 // Posts
 import { HomeScreen } from "@/features/posts/screens/HomeScreen";
@@ -39,7 +40,15 @@ export function AppStack() {
       <Stack.Screen
         name="Home"
         component={HomeScreen}
-        options={{ title: "EducaBlog" }}
+        options={({ navigation }) => ({
+          title: "EducaBlog",
+          headerRight: () => (
+            <HomeHeaderActions
+              onManagePosts={() => navigation.navigate("AdminPosts")}
+              onCreatePost={() => navigation.navigate("CreatePost")}
+            />
+          ),
+        })}
       />
 
       <Stack.Screen

@@ -47,6 +47,10 @@ const postSlice = createSlice({
       state.listError = action.payload;
     },
 
+    removePost(state, action: PayloadAction<string>) {
+      state.list = state.list.filter((post) => post._id !== action.payload);
+    },
+
     clearSelectedPost(state) {
       state.selectedPost = null;
       state.error = null;
@@ -62,6 +66,7 @@ export const {
   setPostsError,
   setListLoading,
   setListError,
+  removePost,
   clearSelectedPost,
 } = postSlice.actions;
 
