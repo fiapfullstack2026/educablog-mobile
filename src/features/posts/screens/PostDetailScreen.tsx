@@ -7,11 +7,13 @@ import { Button } from "@/components/Button";
 import type { PostDetailScreenProps } from "@/navigation/types";
 import type { ApiError } from "@/types/api.types";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { selectIsTeacher } from "@/store/authSlice";
 
 import { setSelectedPost, setPostsLoading, setPostsError } from "../postSlice";
 import { getPostById } from "../services/postsService";
 import { htmlToPlainText } from "../utils/htmlToPlainText";
 import { DisciplineBadge } from "../components/DisciplineBadge";
+import { useDeletePost } from "../hooks/useDeletePost";
 
 const Container = styled(ScrollView)`
   flex: 1;
@@ -45,6 +47,16 @@ const Body = styled.Text`
   font-size: ${({ theme }) => theme.fontSize.md}px;
   line-height: 26px;
   color: ${({ theme }) => theme.colors.gray[800]};
+`;
+
+const OwnerActions = styled.View`
+  flex-direction: row;
+  margin-top: ${({ theme }) => theme.spacing.xl}px;
+`;
+
+const ActionSlot = styled.View`
+  flex: 1;
+  margin-horizontal: ${({ theme }) => theme.spacing.xs}px;
 `;
 
 const StatusContainer = styled.View`
@@ -81,10 +93,13 @@ function getErrorMessage(error: unknown): string {
   return "Ocorreu um erro inesperado ao carregar o post.";
 }
 
-export function PostDetailScreen({ route }: PostDetailScreenProps) {
+export function PostDetailScreen({ route, navigation }: PostDetailScreenProps) {
   const theme = useTheme();
   const dispatch = useAppDispatch();
   const { postId } = route.params;
+
+  const isTeacher = useAppSelector(selectIsTeacher);
+  const { deletingId, confirmDelete } = useDeletePost(() => navigation.goBack());
 
   const post = useAppSelector((state) => state.posts.selectedPost);
   const loading = useAppSelector((state) => state.posts.loading);
@@ -150,6 +165,7 @@ export function PostDetailScreen({ route }: PostDetailScreenProps) {
     );
   }
 
+  const canManage = isTeacher;
   const content = htmlToPlainText(post.content);
   const date = post.createdAt
     ? new Date(post.createdAt).toLocaleDateString("pt-BR")
@@ -178,6 +194,27 @@ export function PostDetailScreen({ route }: PostDetailScreenProps) {
         <Divider />
 
         <Body>{content || "Este post não possui conteúdo."}</Body>
+
+        {canManage && (
+          <OwnerActions>
+            <ActionSlot>
+              <Button
+                label="Editar"
+                variant="ghost"
+                onPress={() => navigation.navigate("EditPost", { postId: post._id })}
+              />
+            </ActionSlot>
+
+            <ActionSlot>
+              <Button
+                label="Excluir"
+                variant="danger"
+                loading={deletingId === post._id}
+                onPress={() => confirmDelete(post._id)}
+              />
+            </ActionSlot>
+          </OwnerActions>
+        )}
       </Content>
     </Container>
   );

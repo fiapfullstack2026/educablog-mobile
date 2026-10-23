@@ -33,3 +33,11 @@ export async function getPostById(id: string): Promise<Post> {
 
   return data.data;
 }
+
+/**
+ * Exclui um post (apenas professores).
+ * DELETE /posts/:id
+ */
+export async function deletePost(id: string): Promise<void> {
+  await api.delete(`/posts/${encodeURIComponent(id)}`);
+}

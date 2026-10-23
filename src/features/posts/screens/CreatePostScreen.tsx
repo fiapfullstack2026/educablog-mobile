@@ -1,5 +1,25 @@
-import React from 'react';
-import { View, Text } from 'react-native';
+import React from "react";
+import styled from "styled-components/native";
+
+import { TeacherOnly } from "@/navigation/TeacherOnly";
+
+const Container = styled.View`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  background-color: ${({ theme }) => theme.colors.gray[50]};
+`;
+
+const Placeholder = styled.Text`
+  color: ${({ theme }) => theme.colors.gray[400]};
+`;
+
 export function CreatePostScreen() {
-  return <View className="flex-1 items-center justify-center"><Text className="text-gray-400">Criar post — Semana 3</Text></View>;
+  return (
+    <TeacherOnly>
+      <Container>
+        <Placeholder>Criar post — Semana 3</Placeholder>
+      </Container>
+    </TeacherOnly>
+  );
 }
