@@ -1,6 +1,6 @@
 import { api } from "@/lib/axios";
 import type { ApiListResponse, ApiResponse } from "@/types/api.types";
-import type { Post } from "../types/post.types";
+import type { CreatePostRequest, Post } from "../types/post.types";
 
 // Usa `new RegExp(q)` para que buscas como "C++" sejam literais e não gerem 500
 function escapeRegExp(value: string): string {
@@ -22,6 +22,9 @@ export async function searchPosts(query: string): Promise<Post[]> {
   return data.data ?? [];
 }
 
+/** POST /posts — requer professor; responde 201 sem corpo */
+export async function createPost(payload: CreatePostRequest): Promise<void> {
+  await api.post("/posts", payload);
 /**
  * Busca os detalhes completos de um post pelo ID.
  * GET /posts/:id

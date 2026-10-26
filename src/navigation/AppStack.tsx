@@ -1,5 +1,7 @@
 import React from "react";
+import { Pressable } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import type { AppStackParamList } from "./types";
 
 import { useAppSelector } from "@/store/hooks";
@@ -42,7 +44,8 @@ export function AppStack() {
         component={HomeScreen}
         options={({ navigation }) => ({
           title: "EducaBlog",
-          headerRight: () => (
+          headerRight: isTeacher
+            ? () => (
             <HomeHeaderActions
               onManagePosts={() => navigation.navigate("AdminPosts")}
               onCreatePost={() => navigation.navigate("CreatePost")}
