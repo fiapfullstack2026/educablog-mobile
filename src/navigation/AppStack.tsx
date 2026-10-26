@@ -1,5 +1,7 @@
 import React from "react";
+import { Pressable } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import type { AppStackParamList } from "./types";
 
 import { useAppSelector } from "@/store/hooks";
@@ -39,7 +41,26 @@ export function AppStack() {
       <Stack.Screen
         name="Home"
         component={HomeScreen}
-        options={{ title: "EducaBlog" }}
+        options={({ navigation }) => ({
+          title: "EducaBlog",
+          // Criação de posts é exclusiva de professores
+          headerRight: isTeacher
+            ? () => (
+                <Pressable
+                  onPress={() => navigation.navigate("CreatePost")}
+                  hitSlop={8}
+                  accessibilityRole="button"
+                  accessibilityLabel="Novo post"
+                >
+                  <MaterialCommunityIcons
+                    name="plus-circle-outline"
+                    size={26}
+                    color="#FFFFFF"
+                  />
+                </Pressable>
+              )
+            : undefined,
+        })}
       />
 
       <Stack.Screen
