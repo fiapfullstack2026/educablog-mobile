@@ -51,6 +51,22 @@ const postSlice = createSlice({
       state.list = state.list.filter((post) => post._id !== action.payload);
     },
 
+    // Aplica uma edição local na lista e no post aberto, sem refazer o GET
+    patchPost(
+      state,
+      action: PayloadAction<{ id: string; changes: Partial<Post> }>,
+    ) {
+      const { id, changes } = action.payload;
+
+      state.list = state.list.map((post) =>
+        post._id === id ? { ...post, ...changes } : post,
+      );
+
+      if (state.selectedPost?._id === id) {
+        state.selectedPost = { ...state.selectedPost, ...changes };
+      }
+    },
+
     clearSelectedPost(state) {
       state.selectedPost = null;
       state.error = null;
@@ -67,6 +83,7 @@ export const {
   setListLoading,
   setListError,
   removePost,
+  patchPost,
   clearSelectedPost,
 } = postSlice.actions;
 

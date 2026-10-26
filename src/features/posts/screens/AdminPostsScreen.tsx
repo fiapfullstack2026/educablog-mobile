@@ -40,6 +40,10 @@ const Empty = styled.Text`
   text-align: center;
 `;
 
+const Spinner = styled(ActivityIndicator)`
+  margin-top: ${({ theme }) => theme.spacing.xl}px;
+`;
+
 const FeedbackWrapper = styled.View`
   padding: ${({ theme }) => theme.spacing.md}px;
 `;
@@ -68,8 +72,7 @@ export function AdminPostsScreen({ navigation }: AdminPostsScreenProps) {
         )}
 
         {loading && !refreshing && posts.length === 0 ? (
-          <ActivityIndicator
-            style={{ marginTop: theme.spacing.xl }}
+          <Spinner
             size="large"
             color={theme.colors.primary}
           />

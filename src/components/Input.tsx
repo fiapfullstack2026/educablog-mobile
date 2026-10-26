@@ -2,21 +2,12 @@ import React, { forwardRef } from 'react';
 import { TextInput, TextInputProps } from 'react-native';
 import styled, { useTheme } from 'styled-components/native';
 
+import { FormField } from './FormField';
+
 interface InputProps extends TextInputProps {
   label?: string;
   error?: string;
 }
-
-const Wrapper = styled.View`
-  margin-bottom: ${({ theme }) => theme.spacing.md}px;
-`;
-
-const Label = styled.Text`
-  font-size: ${({ theme }) => theme.fontSize.sm}px;
-  font-weight: ${({ theme }) => theme.fontWeight.medium};
-  color: ${({ theme }) => theme.colors.gray[700]};
-  margin-bottom: 6px;
-`;
 
 const StyledInput = styled.TextInput<{ hasError: boolean }>`
   border-width: 1.5px;
@@ -29,12 +20,6 @@ const StyledInput = styled.TextInput<{ hasError: boolean }>`
   background-color: ${({ theme }) => theme.colors.white};
 `;
 
-const ErrorText = styled.Text`
-  font-size: ${({ theme }) => theme.fontSize.xs}px;
-  color: ${({ theme }) => theme.colors.danger};
-  margin-top: 4px;
-`;
-
 export const Input = forwardRef<TextInput, InputProps>(function Input(
   { label, error, ...rest },
   ref,
@@ -42,15 +27,13 @@ export const Input = forwardRef<TextInput, InputProps>(function Input(
   const theme = useTheme();
 
   return (
-    <Wrapper>
-      {label && <Label>{label}</Label>}
+    <FormField label={label} error={error}>
       <StyledInput
         ref={ref}
         hasError={!!error}
         placeholderTextColor={theme.colors.gray[400]}
         {...rest}
       />
-      {error && <ErrorText>{error}</ErrorText>}
-    </Wrapper>
+    </FormField>
   );
 });
