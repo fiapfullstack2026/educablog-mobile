@@ -6,6 +6,7 @@ import type { AppStackParamList } from "./types";
 
 import { useAppSelector } from "@/store/hooks";
 import { selectIsTeacher } from "@/store/authSlice";
+import { HomeHeaderActions } from "./HomeHeaderActions";
 
 // Posts
 import { HomeScreen } from "@/features/posts/screens/HomeScreen";
@@ -43,23 +44,13 @@ export function AppStack() {
         component={HomeScreen}
         options={({ navigation }) => ({
           title: "EducaBlog",
-          // Criação de posts é exclusiva de professores
           headerRight: isTeacher
             ? () => (
-                <Pressable
-                  onPress={() => navigation.navigate("CreatePost")}
-                  hitSlop={8}
-                  accessibilityRole="button"
-                  accessibilityLabel="Novo post"
-                >
-                  <MaterialCommunityIcons
-                    name="plus-circle-outline"
-                    size={26}
-                    color="#FFFFFF"
-                  />
-                </Pressable>
-              )
-            : undefined,
+            <HomeHeaderActions
+              onManagePosts={() => navigation.navigate("AdminPosts")}
+              onCreatePost={() => navigation.navigate("CreatePost")}
+            />
+          ),
         })}
       />
 

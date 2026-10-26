@@ -1,16 +1,28 @@
-import { configureStore, combineReducers } from '@reduxjs/toolkit';
-import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { authReducer } from './authSlice';
+import { configureStore, combineReducers } from "@reduxjs/toolkit";
+import {
+  persistStore,
+  persistReducer,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from "redux-persist";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+import { authReducer } from "./authSlice";
+import { postReducer } from "../features/posts/postSlice";
 
 const persistConfig = {
-  key: 'root',
+  key: "root",
   storage: AsyncStorage,
-  whitelist: ['auth'], // apenas auth é persistido
+  whitelist: ["auth"], // Apenas a autenticação é persistida
 };
 
 const rootReducer = combineReducers({
   auth: authReducer,
+  posts: postReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -20,7 +32,6 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        // Ações internas do redux-persist não são serializáveis — ignorar
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
     }),
