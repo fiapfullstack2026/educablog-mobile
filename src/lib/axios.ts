@@ -1,20 +1,23 @@
-import axios from 'axios';
-import * as SecureStore from 'expo-secure-store';
+import axios from "axios";
+import * as SecureStore from "expo-secure-store";
+import { store } from "@/store";
+import { signOut } from "@/store/authSlice";
 
 // A URL base vem de variável de ambiente Expo (EAS Build) ou do valor padrão de dev
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? 'https://educablog.onrender.com';
+const BASE_URL =
+  process.env.EXPO_PUBLIC_API_URL ?? "https://educablog.onrender.com";
 
 export const api = axios.create({
   baseURL: BASE_URL,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
   timeout: 15000,
 });
 
 // --- Interceptor de request: anexa token JWT ---
 api.interceptors.request.use(async (config) => {
-  const token = await SecureStore.getItemAsync('token');
+  const token = await SecureStore.getItemAsync("token");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -25,14 +28,14 @@ api.interceptors.request.use(async (config) => {
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const requestUrl: string = error.config?.url ?? '';
+    const requestUrl: string = error.config?.url ?? "";
     const isAuthRequest = /\/user\/(signin|register)/.test(requestUrl);
 
     if (error.response?.status === 401 && !isAuthRequest) {
-      // Limpa credenciais — o RootNavigator vai redirecionar para Login
-      // ao detectar token null no Redux store via PersistGate
-      await SecureStore.deleteItemAsync('token');
-      await SecureStore.deleteItemAsync('user');
+      // Token recusado pela API: limpa tudo e avisa o Redux → volta ao Login
+      await SecureStore.deleteItemAsync("token");
+      await SecureStore.deleteItemAsync("user");
+      store.dispatch(signOut());
     }
 
     return Promise.reject(error);
