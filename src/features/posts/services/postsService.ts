@@ -1,6 +1,10 @@
 import { api } from "@/lib/axios";
 import type { ApiListResponse, ApiResponse } from "@/types/api.types";
-import type { CreatePostRequest, Post } from "../types/post.types";
+import type {
+  CreatePostRequest,
+  Post,
+  UpdatePostRequest,
+} from "../types/post.types";
 
 // Usa `new RegExp(q)` para que buscas como "C++" sejam literais e não gerem 500
 function escapeRegExp(value: string): string {
@@ -37,6 +41,17 @@ export async function getPostById(id: string): Promise<Post> {
   );
 
   return data.data;
+}
+
+/**
+ * Atualiza um post (apenas professores).
+ * PUT /posts/:id
+ */
+export async function updatePost(
+  id: string,
+  payload: UpdatePostRequest,
+): Promise<void> {
+  await api.put(`/posts/${encodeURIComponent(id)}`, payload);
 }
 
 /**
