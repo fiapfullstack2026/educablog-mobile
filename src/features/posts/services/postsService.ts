@@ -25,6 +25,8 @@ export async function searchPosts(query: string): Promise<Post[]> {
 /** POST /posts — requer professor; responde 201 sem corpo */
 export async function createPost(payload: CreatePostRequest): Promise<void> {
   await api.post("/posts", payload);
+}
+
 /**
  * Busca os detalhes completos de um post pelo ID.
  * GET /posts/:id

@@ -44,8 +44,7 @@ export function AppStack() {
         component={HomeScreen}
         options={({ navigation }) => ({
           title: "EducaBlog",
-          headerRight: isTeacher
-            ? () => (
+          headerRight: () => (
             <HomeHeaderActions
               onManagePosts={() => navigation.navigate("AdminPosts")}
               onCreatePost={() => navigation.navigate("CreatePost")}
