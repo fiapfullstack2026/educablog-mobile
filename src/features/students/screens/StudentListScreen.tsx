@@ -112,7 +112,7 @@ export function StudentListScreen() {
             accessibilityLabel={`Editar aluno ${item.username}`}
           >
             <StudentName>{item.username}</StudentName>
-            <Subtitle>Toque para editar os dados</Subtitle>
+            <Subtitle>Toque para editar ou excluir este aluno</Subtitle>
           </StudentCard>
         )}
         ListEmptyComponent={<Message>Nenhum aluno encontrado.</Message>}
