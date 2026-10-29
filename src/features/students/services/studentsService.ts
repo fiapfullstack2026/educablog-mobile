@@ -22,6 +22,7 @@ export async function getStudents(): Promise<Student[]> {
 
 export async function getStudentById(id: string): Promise<Student> {
   const { data } = await api.get<ApiResponse<Student>>(`/user/${id}`);
+
   return data.data;
 }
 
@@ -30,4 +31,8 @@ export async function updateStudent(
   payload: { username: string },
 ): Promise<void> {
   await api.put(`/user/${id}`, payload);
+}
+
+export async function deleteStudent(id: string): Promise<void> {
+  await api.delete(`/user/${id}`);
 }

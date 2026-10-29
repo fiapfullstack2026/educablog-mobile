@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from "react";
+import { Alert } from "react-native";
 import styled from "styled-components/native";
 import { Input } from "@/components/Input";
 import { Button } from "@/components/Button";
 import { Feedback } from "@/components/Feedback";
 import type { EditStudentScreenProps } from "@/navigation/types";
-import { getStudentById, updateStudent } from "../services/studentsService";
+import {
+  getStudentById,
+  updateStudent,
+  deleteStudent,
+} from "../services/studentsService";
 
 const Container = styled.ScrollView.attrs({
   contentContainerStyle: {
@@ -70,7 +75,9 @@ export function EditStudentScreen({
           setError("Não foi possível carregar os dados do aluno.");
         }
       } finally {
-        if (active) setLoadingStudent(false);
+        if (active) {
+          setLoadingStudent(false);
+        }
       }
     }
 
@@ -98,7 +105,7 @@ export function EditStudentScreen({
         username: trimmedUsername,
       });
 
-      setSuccess("Aluno atualizado com sucesso!");
+      navigation.goBack();
     } catch {
       setError(
         "Não foi possível atualizar o aluno. Verifique os dados e suas permissões.",
@@ -106,6 +113,37 @@ export function EditStudentScreen({
     } finally {
       setSaving(false);
     }
+  }
+
+  function handleDelete() {
+    Alert.alert(
+      "Excluir aluno",
+      "Tem certeza de que deseja excluir este aluno? Essa ação não poderá ser desfeita.",
+      [
+        {
+          text: "Cancelar",
+          style: "cancel",
+        },
+        {
+          text: "Excluir",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              setSaving(true);
+              setError("");
+
+              await deleteStudent(studentId);
+
+              navigation.goBack();
+            } catch {
+              setError("Não foi possível excluir o aluno.");
+            } finally {
+              setSaving(false);
+            }
+          },
+        },
+      ],
+    );
   }
 
   if (loadingStudent) {
@@ -120,7 +158,9 @@ export function EditStudentScreen({
     return (
       <Container>
         <Title>Editar aluno</Title>
+
         <Feedback type="error" message={error} />
+
         <ButtonArea>
           <Button
             label="Voltar"
@@ -136,9 +176,11 @@ export function EditStudentScreen({
   return (
     <Container>
       <Title>Editar aluno</Title>
+
       <Description>Atualize os dados do aluno abaixo.</Description>
 
       {error ? <Feedback type="error" message={error} /> : null}
+
       {success ? <Feedback type="success" message={success} /> : null}
 
       <Input
@@ -165,11 +207,11 @@ export function EditStudentScreen({
         />
 
         <Button
-          label="Cancelar"
+          label="Excluir aluno"
           variant="secondary"
           fullWidth
           disabled={saving}
-          onPress={() => navigation.goBack()}
+          onPress={handleDelete}
         />
       </ButtonArea>
     </Container>
