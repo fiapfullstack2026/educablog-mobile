@@ -48,6 +48,7 @@ export function AppStack() {
             <HomeHeaderActions
               onManagePosts={() => navigation.navigate("AdminPosts")}
               onCreatePost={() => navigation.navigate("CreatePost")}
+              onManageTeachers={() => navigation.navigate("TeacherList")}
             />
           ),
         })}

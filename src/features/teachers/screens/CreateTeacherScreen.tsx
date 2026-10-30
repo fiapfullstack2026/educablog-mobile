@@ -1,5 +1,12 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+
+import { ScreenPlaceholder } from '@/components/ScreenPlaceholder';
+import { TeacherOnly } from '@/navigation/TeacherOnly';
+
 export function CreateTeacherScreen() {
-  return <View className="flex-1 items-center justify-center"><Text className="text-gray-400">Criar professor — Semana 4</Text></View>;
+  return (
+    <TeacherOnly>
+      <ScreenPlaceholder message="Criar professor — Semana 4" />
+    </TeacherOnly>
+  );
 }
