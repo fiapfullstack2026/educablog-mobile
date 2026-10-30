@@ -15,6 +15,9 @@ export type AppStackParamList = {
   EditPost: { postId: string };
   AdminPosts: undefined;
 
+  // Usuários (professores e alunos)
+  Users: undefined;
+
   // Professores
   TeacherList: undefined;
   CreateTeacher: undefined;
@@ -51,6 +54,11 @@ export type EditPostScreenProps = NativeStackScreenProps<
 export type AdminPostsScreenProps = NativeStackScreenProps<
   AppStackParamList,
   "AdminPosts"
+>;
+
+export type UsersScreenProps = NativeStackScreenProps<
+  AppStackParamList,
+  "Users"
 >;
 
 export type TeacherListScreenProps = NativeStackScreenProps<

@@ -1,12 +1,13 @@
 import React from "react";
 import { ActivityIndicator, FlatList, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import styled, { useTheme } from "styled-components/native";
 
-import { Button } from "@/components/Button";
 import { Feedback } from "@/components/Feedback";
 import { TeacherOnly } from "@/navigation/TeacherOnly";
-import type { TeacherListScreenProps } from "@/navigation/types";
+import type { AppStackParamList } from "@/navigation/types";
 import { useAppSelector } from "@/store/hooks";
 import { selectUser } from "@/store/authSlice";
 
@@ -57,7 +58,10 @@ const FeedbackWrapper = styled.View`
   padding-bottom: 0;
 `;
 
-export function TeacherListScreen({ navigation }: TeacherListScreenProps) {
+// Usa useNavigation para também poder ser exibida dentro da tela de Usuários
+export function TeacherListScreen() {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<AppStackParamList>>();
   const theme = useTheme();
   const currentUser = useAppSelector(selectUser);
   const { teachers, loading, refreshing, error, refresh, removeTeacher } =
@@ -70,7 +74,6 @@ export function TeacherListScreen({ navigation }: TeacherListScreenProps) {
     <TeacherOnly>
       <Safe edges={["bottom"]}>
         <Header>
-          <Title>Professores</Title>
           <Subtitle>
             {loading
               ? "Carregando..."
