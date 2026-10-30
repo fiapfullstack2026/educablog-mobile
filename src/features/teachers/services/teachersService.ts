@@ -1,6 +1,9 @@
 import { api } from "@/lib/axios";
 import type { ApiListResponse, ApiResponse } from "@/types/api.types";
-import type { Teacher } from "../schemas/teacher.type";
+import type {
+  Teacher,
+  UpdateTeacherRequest,
+} from "../schemas/teacher.type";
 
 // A API monta o recurso de usuários em /user (mesmo prefixo de /user/signin)
 
@@ -26,6 +29,17 @@ export async function getTeacherById(id: string): Promise<Teacher> {
   );
 
   return data.data;
+}
+
+/**
+ * Atualiza um professor (próprio usuário ou professores).
+ * PUT /user/:id — responde 204 sem corpo; a API faz o hash da senha
+ */
+export async function updateTeacher(
+  id: string,
+  payload: UpdateTeacherRequest,
+): Promise<void> {
+  await api.put(`/user/${encodeURIComponent(id)}`, payload);
 }
 
 /**

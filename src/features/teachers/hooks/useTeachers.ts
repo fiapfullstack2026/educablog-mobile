@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import { isAxiosError } from "axios";
 
 import type { ApiError } from "@/types/api.types";
@@ -43,9 +44,12 @@ export function useTeachers() {
     }
   }, []);
 
-  useEffect(() => {
-    void load().finally(() => setLoading(false));
-  }, [load]);
+  // Recarrega ao voltar para a tela (ex.: após editar um professor)
+  useFocusEffect(
+    useCallback(() => {
+      void load().finally(() => setLoading(false));
+    }, [load]),
+  );
 
   const refresh = useCallback(async () => {
     setRefreshing(true);

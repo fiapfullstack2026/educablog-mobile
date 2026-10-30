@@ -76,11 +76,6 @@ export function TeacherListScreen({ navigation }: TeacherListScreenProps) {
               ? "Carregando..."
               : `${count} ${count === 1 ? "professor cadastrado" : "professores cadastrados"}`}
           </Subtitle>
-          <Button
-            label="Novo Professor"
-            onPress={() => navigation.navigate("CreateTeacher")}
-            fullWidth
-          />
         </Header>
 
         {error && (

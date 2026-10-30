@@ -4,3 +4,10 @@ export interface Teacher {
   isTeacher: boolean;
   createdAt: string;
 }
+
+/** Corpo do PUT /user/:id — envia apenas os campos alterados */
+export interface UpdateTeacherRequest {
+  username?: string;
+  password?: string;
+  isTeacher?: boolean;
+}
