@@ -29,11 +29,17 @@ const authSlice = createSlice({
       state.user = null;
       // A remoção do SecureStore é feita no hook useAuth
     },
+    // Mantém a sessão em sincronia quando o próprio usuário edita seus dados
+    updateUser: (state, action: PayloadAction<Partial<User>>) => {
+      if (state.user) {
+        state.user = { ...state.user, ...action.payload };
+      }
+    },
   },
 });
 
 export const authReducer = authSlice.reducer;
-export const { signIn, signOut } = authSlice.actions;
+export const { signIn, signOut, updateUser } = authSlice.actions;
 
 // Selectors
 export const selectUser = (state: { auth: AuthState }) => state.auth.user;
