@@ -49,6 +49,7 @@ export function AppStack() {
               onManagePosts={() => navigation.navigate("AdminPosts")}
               onCreatePost={() => navigation.navigate("CreatePost")}
               onManageTeachers={() => navigation.navigate("TeacherList")}
+              onManageStudents={() => navigation.navigate("StudentList")}
             />
           ),
         })}
