@@ -15,6 +15,9 @@ import { CreatePostScreen } from "@/features/posts/screens/CreatePostScreen";
 import { EditPostScreen } from "@/features/posts/screens/EditPostScreen";
 import { AdminPostsScreen } from "@/features/posts/screens/AdminPostsScreen";
 
+// Usuários
+import { UsersScreen } from "@/features/users/screens/UsersScreen";
+
 // Professores
 import { TeacherListScreen } from "@/features/teachers/screens/TeacherListScreen";
 import { CreateTeacherScreen } from "@/features/teachers/screens/CreateTeacherScreen";
@@ -48,8 +51,7 @@ export function AppStack() {
             <HomeHeaderActions
               onManagePosts={() => navigation.navigate("AdminPosts")}
               onCreatePost={() => navigation.navigate("CreatePost")}
-              onManageTeachers={() => navigation.navigate("TeacherList")}
-              onManageStudents={() => navigation.navigate("StudentList")}
+              onManageUsers={() => navigation.navigate("Users")}
             />
           ),
         })}
@@ -80,6 +82,12 @@ export function AppStack() {
             name="AdminPosts"
             component={AdminPostsScreen}
             options={{ title: "Gerenciar Posts" }}
+          />
+
+          <Stack.Screen
+            name="Users"
+            component={UsersScreen}
+            options={{ title: "Usuários" }}
           />
 
           <Stack.Screen

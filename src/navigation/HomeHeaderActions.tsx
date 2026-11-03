@@ -9,8 +9,7 @@ import { selectIsTeacher } from "@/store/authSlice";
 interface HomeHeaderActionsProps {
   onManagePosts: () => void;
   onCreatePost: () => void;
-  onManageTeachers: () => void;
-  onManageStudents: () => void;
+  onManageUsers: () => void;
 }
 
 const Row = styled.View`
@@ -25,8 +24,7 @@ const IconButton = styled.TouchableOpacity`
 export function HomeHeaderActions({
   onManagePosts,
   onCreatePost,
-  onManageTeachers,
-  onManageStudents,
+  onManageUsers,
 }: HomeHeaderActionsProps) {
   const isTeacher = useAppSelector(selectIsTeacher);
   const { signOut } = useAuth();
@@ -60,15 +58,9 @@ export function HomeHeaderActions({
           </IconButton>
 
           <IconButton
-            onPress={onManageTeachers}
+            onPress={onManageUsers}
             accessibilityRole="button"
-            accessibilityLabel="Gerenciar professores"
-          >
-            <MaterialCommunityIcons
-              name="account-tie"
-            onPress={onManageStudents}
-            accessibilityRole="button"
-            accessibilityLabel="Gerenciar alunos"
+            accessibilityLabel="Gerenciar usuários"
           >
             <MaterialCommunityIcons
               name="account-group"

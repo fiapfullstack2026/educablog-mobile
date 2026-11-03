@@ -130,21 +130,22 @@ export function TeacherListItem({
           <EditLabel>Editar</EditLabel>
         </ActionButton>
 
-        {/* Excluir a própria conta invalidaria a sessão atual */}
-        {!isCurrentUser && (
-          <ActionButton
-            disabled={deleting}
-            onPress={() => onDelete(teacher)}
-            accessibilityRole="button"
-            accessibilityLabel={`Excluir professor ${teacher.username}`}
-          >
-            {deleting ? (
-              <ActivityIndicator size="small" color={theme.colors.danger} />
-            ) : (
-              <DeleteLabel>Excluir</DeleteLabel>
-            )}
-          </ActionButton>
-        )}
+        <ActionButton
+          disabled={deleting}
+          onPress={() => onDelete(teacher)}
+          accessibilityRole="button"
+          accessibilityLabel={
+            isCurrentUser
+              ? "Excluir minha conta"
+              : `Excluir professor ${teacher.username}`
+          }
+        >
+          {deleting ? (
+            <ActivityIndicator size="small" color={theme.colors.danger} />
+          ) : (
+            <DeleteLabel>Excluir</DeleteLabel>
+          )}
+        </ActionButton>
       </Actions>
     </Container>
   );
