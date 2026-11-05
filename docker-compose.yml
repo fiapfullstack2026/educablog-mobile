@@ -1,0 +1,60 @@
+# Uso:
+#   Remoto (API do Render):  docker compose up --build
+#   Local  (API + Mongo):    HOST_IP=192.168.x.x EXPO_PUBLIC_API_URL=http://192.168.x.x:3000 \
+#                            docker compose --profile local up --build
+
+#   Emulador Android:        HOST_IP=10.0.2.2 EXPO_PUBLIC_API_URL=http://10.0.2.2:3000 \
+#                            docker compose --profile local up --build
+#                            (10.0.2.2 = máquina host vista de dentro do emulador)
+
+services:
+  mobile:
+    image: ${MOBILE_IMAGE:-educablog-mobile}
+    build:
+      context: .
+      args:
+        EXPO_PUBLIC_API_URL: ${EXPO_PUBLIC_API_URL:-https://educablog.onrender.com}
+    container_name: educablog-mobile
+    ports:
+      - '8081:8081'
+      - '19000:19000'
+      - '19001:19001'
+    environment:
+      - EXPO_PUBLIC_API_URL=${EXPO_PUBLIC_API_URL:-https://educablog.onrender.com}
+      # IP da máquina host na rede local (necessário para o Expo Go conectar)
+      - REACT_NATIVE_PACKAGER_HOSTNAME=${HOST_IP:-localhost}
+    restart: unless-stopped
+
+  api:
+    profiles: ['local']
+    image: ${API_IMAGE:-fiapfullstack/educablog-api:3.0}
+    container_name: educablog-api
+    ports:
+      - '3000:3000'
+    environment:
+      - PORT=3000
+      - MONGODB_URI=mongodb://mongo:27017/educablog
+      - NODE_ENV=development
+      - JWT_SECRET=${JWT_SECRET:-dev-secret}
+    depends_on:
+      mongo:
+        condition: service_healthy
+    restart: unless-stopped
+
+  mongo:
+    profiles: ['local']
+    image: mongo:7
+    container_name: educablog-mongo
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ['CMD', 'mongosh', '--eval', "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  mongo_data:
