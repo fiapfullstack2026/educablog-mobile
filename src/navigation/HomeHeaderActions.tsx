@@ -60,7 +60,23 @@ export function HomeHeaderActions({
           <IconButton
             onPress={onManageUsers}
             accessibilityRole="button"
+<<<<<<< Updated upstream
             accessibilityLabel="Gerenciar usuários"
+=======
+            accessibilityLabel="Gerenciar professores"
+          >
+            <MaterialCommunityIcons
+              name="account-tie"
+              size={24}
+              color="#FFFFFF"
+            />
+          </IconButton>
+
+          <IconButton
+            onPress={onManageStudents}
+            accessibilityRole="button"
+            accessibilityLabel="Gerenciar alunos"
+>>>>>>> Stashed changes
           >
             <MaterialCommunityIcons
               name="account-group"
