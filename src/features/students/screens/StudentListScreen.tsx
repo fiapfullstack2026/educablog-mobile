@@ -1,65 +1,80 @@
 import React, { useCallback, useState } from "react";
-import { ActivityIndicator, FlatList } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  FlatList,
+  RefreshControl,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import styled from "styled-components/native";
+import styled, { useTheme } from "styled-components/native";
 
-import { getStudents, type Student } from "../services/studentsService";
+import { Feedback } from "@/components/Feedback";
+import { TeacherOnly } from "@/navigation/TeacherOnly";
 import type { AppStackParamList } from "@/navigation/types";
 
-const Container = styled.View`
+import {
+  getStudents,
+  deleteStudent,
+  type Student,
+} from "../services/studentsService";
+import { StudentListItem } from "../components/StudentListItem";
+
+const Safe = styled(SafeAreaView)`
   flex: 1;
-  padding: 20px;
-  background-color: ${({ theme }) => theme.colors.white};
+  background-color: ${({ theme }) => theme.colors.gray[50]};
 `;
 
-const StudentCard = styled.TouchableOpacity`
-  padding: 16px;
-  margin-bottom: 12px;
-  border-radius: 10px;
-  background-color: #f2f5f3;
-`;
-
-const StudentName = styled.Text`
-  font-size: 16px;
-  color: #1a5c38;
-  font-weight: bold;
+const Header = styled.View`
+  padding: ${({ theme }) => theme.spacing.md}px;
+  padding-bottom: 0;
 `;
 
 const Subtitle = styled.Text`
-  font-size: 13px;
-  color: #666666;
-  margin-top: 5px;
+  margin-top: ${({ theme }) => theme.spacing.xs}px;
+  margin-bottom: ${({ theme }) => theme.spacing.md}px;
+  font-size: ${({ theme }) => theme.fontSize.sm}px;
+  color: ${({ theme }) => theme.colors.gray[500]};
 `;
 
-const Message = styled.Text`
-  color: #555555;
-  font-size: 15px;
+const Separator = styled.View`
+  height: ${({ theme }) => theme.spacing.md}px;
+`;
+
+const Empty = styled.Text`
+  padding: ${({ theme }) => theme.spacing.xl}px;
+  font-size: ${({ theme }) => theme.fontSize.sm}px;
+  color: ${({ theme }) => theme.colors.gray[500]};
   text-align: center;
-  margin-top: 20px;
 `;
 
-const RetryButton = styled.TouchableOpacity`
-  padding: 12px;
-  align-items: center;
+const Spinner = styled(ActivityIndicator)`
+  margin-top: ${({ theme }) => theme.spacing.xl}px;
 `;
 
-const RetryText = styled.Text`
-  color: #1a5c38;
-  font-weight: bold;
+const FeedbackWrapper = styled.View`
+  padding: ${({ theme }) => theme.spacing.md}px;
+  padding-bottom: 0;
 `;
 
 export function StudentListScreen() {
   const navigation =
     useNavigation<NativeStackNavigationProp<AppStackParamList>>();
 
+  const theme = useTheme();
+
   const [students, setStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [error, setError] = useState("");
 
-  const loadStudents = useCallback(async () => {
+  const loadStudents = useCallback(async (refresh = false) => {
     try {
-      setLoading(true);
+      if (refresh) setRefreshing(true);
+      else setLoading(true);
+
       setError("");
 
       const result = await getStudents();
@@ -68,6 +83,7 @@ export function StudentListScreen() {
       setError("Não foi possível carregar os alunos.");
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   }, []);
 
@@ -77,46 +93,90 @@ export function StudentListScreen() {
     }, [loadStudents]),
   );
 
-  if (loading) {
-    return (
-      <Container>
-        <ActivityIndicator size="large" color="#1A5C38" />
-      </Container>
-    );
-  }
+  function handleDelete(student: Student) {
+    Alert.alert(
+      "Excluir aluno",
+      `Tem certeza de que deseja excluir ${student.username}?`,
+      [
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Excluir",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              setDeletingId(student._id);
+              setError("");
 
-  if (error) {
-    return (
-      <Container>
-        <Message>{error}</Message>
-        <RetryButton onPress={() => void loadStudents()}>
-          <RetryText>Tentar novamente</RetryText>
-        </RetryButton>
-      </Container>
+              await deleteStudent(student._id);
+
+              setStudents((current) =>
+                current.filter((item) => item._id !== student._id),
+              );
+            } catch {
+              setError("Não foi possível excluir o aluno.");
+            } finally {
+              setDeletingId(null);
+            }
+          },
+        },
+      ],
     );
   }
 
   return (
-    <Container>
-      <FlatList
-        data={students}
-        keyExtractor={(student) => student._id}
-        renderItem={({ item }) => (
-          <StudentCard
-            onPress={() =>
-              navigation.navigate("EditStudent", {
-                studentId: item._id,
-              })
+    <TeacherOnly>
+      <Safe edges={["bottom"]}>
+        <Header>
+          <Subtitle>
+            {loading
+              ? "Carregando..."
+              : `${students.length} ${
+                  students.length === 1
+                    ? "aluno cadastrado"
+                    : "alunos cadastrados"
+                }`}
+          </Subtitle>
+        </Header>
+
+        {error ? (
+          <FeedbackWrapper>
+            <Feedback type="error" message={error} />
+          </FeedbackWrapper>
+        ) : null}
+
+        {loading ? (
+          <Spinner size="large" color={theme.colors.primary} />
+        ) : (
+          <FlatList
+            data={students}
+            keyExtractor={(student) => student._id}
+            contentContainerStyle={{ padding: theme.spacing.md }}
+            ItemSeparatorComponent={Separator}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={() => void loadStudents(true)}
+                tintColor={theme.colors.primary}
+                colors={[theme.colors.primary]}
+              />
             }
-            accessibilityRole="button"
-            accessibilityLabel={`Editar aluno ${item.username}`}
-          >
-            <StudentName>{item.username}</StudentName>
-            <Subtitle>Toque para editar ou excluir este aluno</Subtitle>
-          </StudentCard>
+            ListEmptyComponent={
+              error ? null : <Empty>Nenhum aluno encontrado.</Empty>
+            }
+            renderItem={({ item }) => (
+              <StudentListItem
+                student={item}
+                onEdit={(student) =>
+                  navigation.navigate("EditStudent", {
+                    studentId: student._id,
+                  })
+                }
+                onDelete={handleDelete}
+              />
+            )}
+          />
         )}
-        ListEmptyComponent={<Message>Nenhum aluno encontrado.</Message>}
-      />
-    </Container>
+      </Safe>
+    </TeacherOnly>
   );
 }

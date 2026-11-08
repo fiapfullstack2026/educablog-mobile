@@ -4,6 +4,13 @@ export interface Student {
   _id: string;
   username: string;
   isTeacher: boolean;
+  createdAt?: string;
+}
+
+export interface UpdateStudentRequest {
+  username?: string;
+  password?: string;
+  isTeacher?: boolean;
 }
 
 interface ApiResponse<T> {
@@ -28,7 +35,7 @@ export async function getStudentById(id: string): Promise<Student> {
 
 export async function updateStudent(
   id: string,
-  payload: { username: string },
+  payload: UpdateStudentRequest,
 ): Promise<void> {
   await api.put(`/user/${id}`, payload);
 }
