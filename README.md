@@ -4,17 +4,6 @@ API para blogging dinâmico entre professores e alunos.
 
 Projeto da **FIAP PosTech Full Stack Development, Fase 4 (Tech Challenge)**. Consome a mesma API REST das fases anteriores e reaproveita os contratos e a identidade visual do front-end web da Fase 3.
 
-## Sumário
-
-- [Tecnologias](#tecnologias)
-- [Começando](#começando)
-- [Guia de uso](#guia-de-uso)
-- [Arquitetura](#arquitetura)
-- [Decisões arquiteturais](#decisões-arquiteturais)
-- [Limitações conhecidas e próximos passos](#limitações-conhecidas-e-próximos-passos)
-- [Contribuindo](#contribuindo)
-- [Links](#links)
-
 ## Tecnologias
 
 | Camada | Tecnologia |
