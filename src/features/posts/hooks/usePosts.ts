@@ -34,12 +34,18 @@ export function usePosts(search = "") {
   const [refreshing, setRefreshing] = useState(false);
 
   const requestId = useRef(0);
+  // Só o primeiro carregamento usa o loading de tela cheia; buscas e
+  // refresh usam indicadores próprios para não desmontar o campo de busca.
+  const isInitialLoad = useRef(true);
   const term = search.trim();
 
   const load = useCallback(async () => {
     const id = ++requestId.current;
 
-    dispatch(setListLoading(true));
+    if (isInitialLoad.current) {
+      isInitialLoad.current = false;
+      dispatch(setListLoading(true));
+    }
     dispatch(setListError(null));
 
     try {
