@@ -60,6 +60,67 @@ Com o servidor do Expo no ar, escaneie o QR code com o Expo Go ou pressione `a` 
 
 Variáveis com prefixo `EXPO_PUBLIC_` são embutidas no bundle no build. Não coloque segredos nelas.
 
+### Rodando com Docker Compose
+
+Alternativa ao `npm install` local: o Metro bundler roda em um container e o app é aberto no Expo Go ou no emulador Android, que continuam no host. Requer [Docker](https://docs.docker.com/get-docker/) com o plugin Compose.
+
+O `docker-compose.yml` tem três serviços:
+
+| Serviço | Profile | Função |
+|---|---|---|
+| `mobile` | (sempre) | Metro bundler do Expo, nas portas `8081`, `19000` e `19001` |
+| `api` | `local` | API do EducaBlog (`fiapfullstack/educablog-api`), porta `3000` |
+| `mongo` | `local` | MongoDB 7 usado pela API local, porta `27017` |
+
+Sem o profile `local`, apenas o `mobile` sobe e o app usa a API hospedada no Render.
+
+#### Com a API do Render
+
+```bash
+HOST_IP=192.168.x.x docker compose up --build
+```
+
+`HOST_IP` é o IP da sua máquina na rede local, para o Expo Go no celular alcançar o bundler. Depois, escaneie o QR code exibido nos logs (`docker compose logs -f mobile`) ou informe `exp://192.168.x.x:8081` no Expo Go.
+
+#### Com API e MongoDB locais
+
+```bash
+HOST_IP=192.168.x.x EXPO_PUBLIC_API_URL=http://192.168.x.x:3000 \
+  docker compose --profile local up --build
+```
+
+#### Com o emulador Android
+
+No emulador, a máquina host é vista como `10.0.2.2`:
+
+```bash
+HOST_IP=10.0.2.2 EXPO_PUBLIC_API_URL=http://10.0.2.2:3000 \
+  docker compose --profile local up --build
+```
+
+Com o emulador aberto, abra o Expo Go, escolha **Enter URL manually** e informe `exp://10.0.2.2:8081`. Com o `adb` no PATH, também funciona:
+
+```bash
+adb shell am start -a android.intent.action.VIEW -d "exp://10.0.2.2:8081"
+```
+
+#### Variáveis do Compose
+
+| Variável | Padrão | Descrição |
+|---|---|---|
+| `HOST_IP` | `localhost` | IP do host que o Expo anuncia ao app |
+| `EXPO_PUBLIC_API_URL` | `https://educablog.onrender.com` | URL da API embutida no bundle |
+| `JWT_SECRET` | `dev-secret` | Segredo JWT da API local |
+| `MOBILE_IMAGE` / `API_IMAGE` | `educablog-mobile` / `fiapfullstack/educablog-api:3.0` | Nomes das imagens |
+
+> O Compose lê o arquivo `.env` da raiz. Se ele tiver `EXPO_PUBLIC_API_URL`, esse valor vira o padrão do container, mesmo sem passar a variável na linha de comando.
+
+> A tecla `a` do Expo (abrir no emulador) não funciona dentro do container, pois não há `adb` nele. Abra o app manualmente, como descrito acima.
+
+> `EXPO_PUBLIC_API_URL` é fixada no build da imagem. Se mudar a URL, rode com `--build`.
+
+Para parar: `docker compose down` (acrescente `--profile local` se tiver usado a API local; `-v` também apaga os dados do MongoDB).
+
 ### Scripts
 
 | Comando | O que faz |
